@@ -72,7 +72,7 @@ class Game():
                     for i in range(40):
                         if not i == 0:
                             if self.score == i*25:
-                                self.velocity += 0.25
+                                self.velocity += 0.5
                                 break
                     
                 if self.dead_zone_rect.colliderect(pop.rect):
