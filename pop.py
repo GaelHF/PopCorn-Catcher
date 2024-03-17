@@ -4,7 +4,7 @@ from random import randint
 
 class POP(pygame.sprite.Sprite):
     
-    def __init__(self, screen):
+    def __init__(self, screen, velocity):
         super().__init__()
         pygame.init()
         
@@ -23,10 +23,11 @@ class POP(pygame.sprite.Sprite):
         self.y = self.rect.y
         self.y = 0
     
-        self.velocity = 0.25
+        self.velocity = velocity
         
     def fall(self): self.y += self.velocity
-      
+    
+    
     def update(self): 
         self.screen.blit(self.image, (self.x, self.y))
         self.rect = self.image.get_rect(center=(self.x, self.y))

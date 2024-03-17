@@ -23,6 +23,9 @@ class Game():
         self.score = 0
         self.best_score = 0
         self.heart = 8
+        self.height = 8
+        
+        self.velocity = 0.25
         
         #Window
         self.screen = pygame.display.set_mode((self.x , self.y))
@@ -42,7 +45,7 @@ class Game():
         self.mixer = popcorn_mixer.Mixer()
     
     def spawn_pops(self):
-        pop = popcorn_pop.POP(self.screen)
+        pop = popcorn_pop.POP(self.screen, self.velocity)
         self.all_pops.add(pop)
     
     #Utiles
@@ -54,9 +57,6 @@ class Game():
         img.set_alpha(opacity)
         self.screen.blit(img, (x, y))
     
-    heart_image = pygame.image.load('./assets/img/heart.png')
-    heart_image = pygame.transform.scale(heart_image, (50, 50))
-    
     dead_zone = pygame.Surface((700, 25))
     dead_zone_rect = dead_zone.get_rect(topleft=(0, 675))
     def update(self):
@@ -64,21 +64,33 @@ class Game():
         ##POPS
         for pop in self.all_pops:
                 if self.player.rect.colliderect(pop.rect):
+                    
                     self.score += 1
                     pop.kill()
                     self.mixer.play_sound('./assets/audio/pop.mp3')
                     self.spawn_pops()
+                    for i in range(40):
+                        if not i == 0:
+                            if self.score == i*25:
+                                self.velocity += 0.25
+                                break
+                    
                 if self.dead_zone_rect.colliderect(pop.rect):
-                    self.heart -= 1
-                    if self.heart == 0:
+                    self.height -= 1
+                    
+                    if self.height == 0:
                         if self.score > self.best_score:
                             self.best_score = self.score
                         self.playing = False
-                        self.heart = 8
                         self.score = 0
+                        self.velocity = 0.25
+                        self.height = 8
+                        self.player.change_size(self.height)
                         self.mixer.play_sound('./assets/audio/game_over.mp3')
                         break
+                    
                     pop.kill()
+                    self.player.change_size(self.height)
                     self.mixer.play_sound('./assets/audio/lost_pop.mp3')
                     self.spawn_pops()
         
@@ -92,16 +104,12 @@ class Game():
         ##DRAW
         self.screen.fill((255, 57, 45))
         
-        #Heart
-        for i in range(self.heart):
-            self.screen.blit(self.heart_image, (i*55, 0))
-        
         #Dead zone
         
         self.dead_zone.fill(pygame.Color("black"))
         self.screen.blit(self.dead_zone, (0, 675))
         
-        self.draw_text(text='Score : ' + str(self.score), font=self.font, text_col=self.TEXT_COL, x=500, y=12.5, opacity=200)
+        self.draw_text(text='Score : ' + str(self.score), font=self.font, text_col=self.TEXT_COL, x=5, y=12.5, opacity=200)
         
         self.all_pops.update()
         self.player.update()

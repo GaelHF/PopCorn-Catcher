@@ -12,14 +12,16 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         pygame.init()
         
+        self.size = 8
+        
         self.screen = screen
         self.image = pygame.image.load('./assets/img/bucket.png')
-        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.scale(self.image, (100, 100 + self.size * 10))
         self.rect = self.image.get_rect(center=(POSITION['center'], self.screen.get_height() - 100))
         
         self.x = self.rect.x
         self.x = 300
-        self.height = self.screen.get_height() - 100
+        self.height = self.screen.get_height() - 195
         
         self.velocity = 1
         
@@ -27,6 +29,11 @@ class Player(pygame.sprite.Sprite):
     
     def move_left(self): self.x -= self.velocity
     def move_right(self): self.x += self.velocity
+    
+    def change_size(self, size):
+        self.size = size
+        self.image = pygame.transform.scale(self.image, (100, 100 + self.size * 10))
+        self.height = self.screen.get_height() - int(100 + size*10 + 25)
     
     def move(self, way):
         if way == 'left':
