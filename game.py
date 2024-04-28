@@ -3,6 +3,7 @@ from sys import exit
 import player as popcorn_player
 import pop as popcorn_pop
 import mixer as popcorn_mixer
+from asyncio import sleep
 
 class Game():
     
@@ -81,6 +82,7 @@ class Game():
                     if self.height == 0:
                         if self.score > self.best_score:
                             self.best_score = self.score
+                            self.all_pops.empty()
                         self.playing = False
                         self.score = 0
                         self.velocity = 0.25
@@ -129,16 +131,16 @@ class Game():
         pygame.display.flip()
         pygame.display.update()
     
-    def run(self):
+    async def run(self):
         self.clock.tick(self.FPS)
-        for i in range(self.amount):
-            self.spawn_pops()
         
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.play_button_rect.collidepoint(event.pos) and not self.playing:
                         self.playing = True
+                        for i in range(self.amount):
+                            self.spawn_pops()
                 if event.type == pygame.QUIT:
                     self.running = False
                     pygame.quit()
@@ -147,3 +149,4 @@ class Game():
                 self.update()
             else:
                 self.tick_menu()
+        await sleep(0)
